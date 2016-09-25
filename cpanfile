@@ -1,4 +1,6 @@
-requires 'perl', '5.010';
+requires 'perl',     '5.010';
+requires 'Log::Any', '1.042';
+requires 'Mo',       '0.040';
 
 on test => sub {
    requires 'Test::More', '0.88';

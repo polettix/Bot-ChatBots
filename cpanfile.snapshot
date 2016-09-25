@@ -39,6 +39,61 @@ DISTRIBUTIONS
       perl 5.006
       strict 0
       warnings 0
+  Log-Any-1.042
+    pathname: P/PR/PREACTION/Log-Any-1.042.tar.gz
+    provides:
+      Log::Any 1.042
+      Log::Any::Adapter 1.042
+      Log::Any::Adapter::Base 1.042
+      Log::Any::Adapter::File 1.042
+      Log::Any::Adapter::Null 1.042
+      Log::Any::Adapter::Stderr 1.042
+      Log::Any::Adapter::Stdout 1.042
+      Log::Any::Adapter::Test 1.042
+      Log::Any::Adapter::Util 1.042
+      Log::Any::Manager 1.042
+      Log::Any::Proxy 1.042
+      Log::Any::Proxy::Null 1.042
+      Log::Any::Proxy::Test 1.042
+      Log::Any::Test 1.042
+    requirements:
+      B 0
+      Carp 0
+      Data::Dumper 0
+      Exporter 0
+      ExtUtils::MakeMaker 6.17
+      Fcntl 0
+      IO::File 0
+      Test::Builder 0
+      constant 0
+      perl 5.008001
+      strict 0
+      warnings 0
+  Mo-0.40
+    pathname: T/TI/TINITA/Mo-0.40.tar.gz
+    provides:
+      Attr::Trait 0.40
+      Mo 0.40
+      Mo::Golf 0.40
+      Mo::Inline 0.40
+      Mo::Moose 0.40
+      Mo::Mouse 0.40
+      Mo::build 0.40
+      Mo::builder 0.40
+      Mo::chain 0.40
+      Mo::coerce 0.40
+      Mo::default 0.40
+      Mo::exporter 0.40
+      Mo::import 0.40
+      Mo::importer 0.40
+      Mo::is 0.40
+      Mo::nonlazy 0.40
+      Mo::option 0.40
+      Mo::required 0.40
+      Mo::xs 0.40
+    requirements:
+      ExtUtils::MakeMaker 0
+      perl 5.006000
   Module-Build-Tiny-0.039
     pathname: L/LE/LEONT/Module-Build-Tiny-0.039.tar.gz
     provides:
