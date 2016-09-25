@@ -1,6 +1,7 @@
-requires 'perl',     '5.010';
-requires 'Log::Any', '1.042';
-requires 'Mo',       '0.040';
+requires 'perl',            '5.010';
+requires 'Log::Any',        '1.042';
+requires 'Mo',              '0.040';
+requires 'Module::Runtime', '0.014';
 
 on test => sub {
    requires 'Test::More', '0.88';
