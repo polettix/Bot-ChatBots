@@ -3,6 +3,7 @@ use strict;
 { our $VERSION = '0.001'; }
 
 use Log::Any ();
+use Mo;
 
 sub logger { return Log::Any->get_logger }
 
