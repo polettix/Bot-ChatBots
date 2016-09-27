@@ -41,6 +41,7 @@
          "requires" : {
             "Log::Any" : "1.042",
             "Mo" : "0.040",
+            "Module::Runtime" : "0.014",
             "perl" : "5.010"
          }
       },
