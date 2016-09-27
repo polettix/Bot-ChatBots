@@ -1,0 +1,116 @@
+=pod
+
+=encoding utf8
+
+=head1 NAME
+
+Bot::ChatBots::Utils - Utility functions for Bot::ChatBots
+
+=head1 SYNOPSIS
+
+   use Bot::ChatBots qw< guard load_module resolve_module >;
+
+   {
+      my $guard = guard(sub { print 'whatever' });
+   }
+   # 'whatever' is printed here
+   {
+      my $guard = guard(sub { print 'whatever' });
+      # ... do stuff...
+      $guard->release; # 'whatever' is printed here
+   }
+   # nothing is printed here
+
+   resolve_module('Duh');        # returns 'Bot::ChatBots::Duh'
+   resolve_module('Foo::Bar');   # returns 'Foo::Bar'
+   resolve_module('!Duh');       # returns 'Duh'
+   resolve_module('::Foo::Bar'); # returns 'Bot::ChatBots::Foo::Bar'
+
+   # transform $something using resolve_module, load it and return
+   # the loaded class name
+   load_module($something);
+
+=head1 DESCRIPTION
+
+This module provides a few utilities for ease your way while building
+stuff with Bot::ChatBots.
+
+Nothing is exported by default.
+
+=head1 FUNCTIONS
+
+=head2 B<< guard >>
+
+   my $guard = guard(sub{ ... });
+
+Returns a guard object by calling L<Bot::ChatBots::Guard/new>.
+
+=head2 B<< load_module >>
+
+   my $module_name = load_module($module_name_spec);
+
+Transforms the input C<$module_name_spec> via L</resolve_module>, then
+loads the result using L<Module::Runtime/use_module> and returns the
+loaded module name. This can be useful for doing things like this:
+
+   # load Bot::ChatBots::Auth and create an instance
+   my $auth = load_module('Auth')->new(users => {whitelist => {1 => 1}});
+
+=head2 B<< resolve_module >>
+
+   my $module_name = resolve_module($spec); # OR
+      $module_name = resolve_module($spec, $prefix);
+
+Transform an input C<$spec> string into a module name. Parameter
+C<$prefix> is optional and defaults to C<Bot::ChatBots>. The
+transformation rules are as follows:
+
+=over
+
+*
+
+if C<$spec> starts with two colons C<::>, then C<$prefix . $spec> is
+returned, ELSE
+
+*
+
+if C<$spec> starts with an exclamation point C<!>, the first character is
+removed and the rest of the string is returned without further processing,
+ELSE
+
+*
+
+if C<$spec> does NOT contain the C<::> sequence, the string C<$prefix
+. '::' . $spec> is returned, ELSE
+
+*
+
+if none of the above apply, the provided C<$spec> is returned namely.
+
+=back
+
+The net result is that single names (like C<Foo> or C<WhatEver>) get
+prefixed, stuff resembling a full module name are preserved, but you can
+force prefixing by pre-pending C<::> or you can disable prefixing by
+pre-pending an exclamation mark.
+
+=head1 SEE ALSO
+
+L<Bot::ChatBots>, L<Bot::ChatBots::Guard>, L<Module::Runtime>.
+
+=head1 AUTHOR
+
+Flavio Poletti <polettix@cpan.org>
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright (C) 2016 by Flavio Poletti <polettix@cpan.org>
+
+This module is free software. You can redistribute it and/or modify it
+under the terms of the Artistic License 2.0.
+
+This program is distributed in the hope that it will be useful, but
+without any warranty; without even the implied warranty of
+merchantability or fitness for a particular purpose.
+
+=cut

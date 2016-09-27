@@ -1,0 +1,78 @@
+=pod
+
+=encoding utf8
+
+=head1 NAME
+
+Bot::ChatBots::Base - Base class for ChatBots components
+
+=head1 SYNOPSIS
+
+   use Mo; # or Moo, or Moose...
+   extends 'Bots::ChatBots::Base';
+   # now you get two methods: logger (via Log::Any) and processor (which
+   # returns a sub reference calling any `process` method you might have)
+   sub process {
+      my ($self, $record) = @_;
+      $self->logger->info('this is a passthrough!');
+      return $record;
+   };
+   1;
+
+=head1 DESCRIPTION
+
+This base class is handy if you want to get a C<logger> for free, plus a
+convenience method to generate a sub reference that automatically calls method
+C<process>, that you are supposed to implement yourself.
+
+Although you can use it however you want, it will be probably useful for you to
+stick to L<Data::Tubes> convention for implementing the C<process> method. In
+this way, L</processor> will simply return a valid tube out of your method,
+which basically means that it's very easy to generate tube-compliant stuff out
+of a simple derived class.
+
+=head1 METHODS
+
+=head2 B<< logger >>
+
+   my $logger = $self->logger;
+
+This method gives you access to a logger object (via L<Log::Any>). The final
+application is supposed to adhere to L<Log::Any> conventions (e.g. by setting
+the relevant L<Log::Any::Adapter>) in order to initialize the logger object
+itself.
+
+=head2 B<< processor >>
+
+   my $tube = $obj->processor;
+
+This method returns a sub reference that will call method C<process> with any received parameter. It's basically this:
+
+   sub processor {
+      my $self;
+      return sub { return $self->process(@_) };
+   }
+
+This means that you can implement your transformation logic in a C<process>
+method, then use this to get a tube-compliant sub reference.
+
+=head1 SEE ALSO
+
+L<Bot::ChatBots>.
+
+=head1 AUTHOR
+
+Flavio Poletti <polettix@cpan.org>
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright (C) 2016 by Flavio Poletti <polettix@cpan.org>
+
+This module is free software. You can redistribute it and/or modify it
+under the terms of the Artistic License 2.0.
+
+This program is distributed in the hope that it will be useful, but
+without any warranty; without even the implied warranty of
+merchantability or fitness for a particular purpose.
+
+=cut

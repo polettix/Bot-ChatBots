@@ -4,7 +4,7 @@
 
 =head1 NAME
 
-Bot::ChatBots - [ a brief description of the distribution ]
+Bot::ChatBots - Basic system for ChatBots
 
 =head1 VERSION
 
@@ -13,30 +13,22 @@ This document describes Bot::ChatBots version {{[ version ]}}.
 =head1 SYNOPSIS
 
    use Bot::ChatBots;
-
+   # more will come, possibly in sub-modules
 
 =head1 DESCRIPTION
 
-This module allows you to...
-
-=head1 FUNCTIONS
-
-=head2 B<< whatever >>
-
-
-
-=head1 METHODS
-
-=head2 B<< whatever >>
+The Bot::ChatBots family of modules aim to help setting up ChatBots in
+different technologies.
 
 
 =head1 BUGS AND LIMITATIONS
 
-Report bugs either through RT or GitHub (patches welcome).
+Report bugs either GitHub (patches welcome).
 
 =head1 SEE ALSO
 
-Foo::Bar.
+L<Bot::ChatBots::Telegram> should be the first implementation of a backend (for
+Telegram).
 
 =head1 AUTHOR
 
