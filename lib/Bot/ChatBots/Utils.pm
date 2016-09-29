@@ -33,7 +33,9 @@ sub pipeline {
       else { $_ }
    } @_;
    require Data::Tubes;
-   return Data::Tubes::pipeline(@defs, $opts);
+   $opts->{tap} //= sub { ($_[0]->())[0] }
+     unless exists $opts->{pump};
+   Data::Tubes::pipeline(@defs, $opts);
 } ## end sub pipeline
 
 sub resolve_module {
