@@ -19,7 +19,7 @@ sub pipeline {
 
    my $opts = {};
    $opts = shift(@_) if (@_ && ref($_[0]) eq 'HASH');
-   $opts = pop(@_) if (@_ && ref($_[-1]) eq 'HASH');
+   $opts = pop(@_)   if (@_ && ref($_[-1]) eq 'HASH');
    my $prefix = $opts->{prefix} // 'Bot::ChatBots';
    my @defs = map {
       my $r = ref $_;
