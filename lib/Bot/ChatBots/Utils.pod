@@ -56,6 +56,34 @@ loaded module name. This can be useful for doing things like this:
    # load Bot::ChatBots::Auth and create an instance
    my $auth = load_module('Auth')->new(users => {whitelist => {1 => 1}});
 
+=head2 B<< pipeline >>
+
+   my $tube = pipeline($atube); # OR
+      $tube = pipeline(@specifications); # OR
+      $tube = pipeline(\%opts, @specifications); # OR
+      $tube = pipeline(@specifications, \%opts);
+
+Smart wrapper around L<Data::Tubes/pipeline>.
+
+If a single argument is provided and it is a sub reference, it is
+considered to be a tube itself and returned directly. In this case, no
+call to L<Data::Tubes/pipeline> is done (and L<Data::Tubes> is then not
+required).
+
+In all other cases L<Data::Tubes> is required as a dependency.
+
+Arguments C<@specifications> must be either tubes (i.e. sub references) or
+definitions that can be transformed into tubes (see L<Data::Tubes> for the
+details). You can pass options with a hash reference either as the first
+or the last parameter.
+
+One option that you can pass is C<prefix>, which sets the prefix for
+automatic resolution of names. This resolution is done via
+L</resolve_module> and does not rely upon L<Data::Tubes>' own mechanism.
+These C<\%opts> are anyway passed down to L<Data::Tubes> if you want to
+set additional supported options. By default, C<%opts> is considered an
+empty hash.
+
 =head2 B<< resolve_module >>
 
    my $module_name = resolve_module($spec); # OR
