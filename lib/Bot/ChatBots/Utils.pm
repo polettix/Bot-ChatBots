@@ -5,7 +5,7 @@ use strict;
 use Exporter 'import';
 use Module::Runtime qw< use_module >;
 
-our @EXPORT_OK = qw< guard load_module resolve_module >;
+our @EXPORT_OK = qw< guard load_module pipeline resolve_module >;
 
 sub guard {
    require Bot::ChatBots::Guard;
@@ -13,6 +13,28 @@ sub guard {
 }
 
 sub load_module { return use_module(resolve_module(@_)) }
+
+sub pipeline {
+   return $_[0] if (@_ == 1) && (ref($_[0]) eq 'CODE');
+
+   my $opts = {};
+   $opts = shift(@_) if (@_ && ref($_[0]) eq 'HASH');
+   $opts = pop(@_) if (@_ && ref($_[-1]) eq 'HASH');
+   my $prefix = $opts->{prefix} // 'Bot::ChatBots';
+   my @defs = map {
+      my $r = ref $_;
+      if (!$r) {
+         '!' . resolve_module($_, $prefix);
+      }
+      elsif ($r eq 'ARRAY') {
+         my ($name, @rest) = @$_;
+         ['!' . resolve_module($_, $prefix), @rest];
+      }
+      else { $_ }
+   } @_;
+   require Data::Tubes;
+   return Data::Tubes::pipeline(@defs, $opts);
+} ## end sub pipeline
 
 sub resolve_module {
    my ($name, $prefix) = @_;
