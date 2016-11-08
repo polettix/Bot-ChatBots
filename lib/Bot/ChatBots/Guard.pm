@@ -1,6 +1,6 @@
 package Bot::ChatBots::Guard;
 use strict;
-{ our $VERSION = '0.001005'; }
+{ our $VERSION = '0.001006'; }
 
 sub new { return bless {callback => $_[1]}, $_[0] }
 
