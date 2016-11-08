@@ -1,0 +1,317 @@
+=pod
+
+=encoding utf8
+
+=head1 NAME
+
+Bot::ChatBots::Role::WebHook - Bot::ChatBots Role for WebHooks
+
+=head1 SYNOPSIS
+
+   package Bot::ChatBots::Whatever::WebHook;
+   use Moo;
+   with 'Bot::ChatBots::Role::WebHook';
+
+   sub parse_request {
+      my ($self, $request) = @_;
+      my @updates = $request->json;
+      return @updates;
+   }
+
+   sub render_response {
+      my ($self, $controller, $response, $update) = @_;
+
+      # E.g. Telegram allows you to answer directly...
+      $response = {text => $response} unless ref $response;
+      local $response->{method} = $response->{method}
+         // 'sendMessage';
+      local $response->{chat_id} = $response->{chat_id}
+         // $update->{message}{chat}{id};
+      return $controller->render(json => $response);
+   }
+
+   1;
+
+=head1 DESCRIPTION
+
+This is an updates receiver and dispatcher role for defining WebHooks
+(i.e. when the platform pushes updates through a webhook).
+
+The generic model is the following:
+
+=over
+
+=item *
+
+you register a webhook at your service. How this is done is beyond the
+scope of this Role, although it allows you to L</install_route> in
+L<Mojolicious> to listen for the calls to the webhook;
+
+=item *
+
+when the remote service calls the webhook, the request object is passed to
+L</parse_request> (that is mandatorily provided by the class composing
+this role) to get a list of updates back;
+
+=item *
+
+for each of the received updates, L</process> is called, with the following
+input hash reference:
+
+   {
+      batch => {
+         count => $i,    # id of this update in batch, starting from 1
+         total => $N,    # number of updates in this batch
+      },
+      source => {
+         args  => \%args,     # whatever you passed in to install_route
+         class => $string ,   # the class of your webhook
+         refs => {
+            app  => $app,        # Mojolicious object
+            c    => $controller, # Mojolicious::Controller object
+            self => $obj,        # Your very object
+         }
+         type => $typename,   # defaults to lc() of last part of class name
+
+         $obj->source_custom_pairs, # whatever you want to add...
+
+      },
+      stash  => $hashref,
+      update => $update_object_parsed_by_parse_request,
+   }
+
+=item *
+
+the last call to L</process> can return a hash reference I<$something>. In
+this case, this might condition the answer to the webhook via
+L</render_response>.
+
+In particular, if C<$something> contains a C<rendered> field, the
+assumption is that you already rendered the response and nothing more has
+to be done. You this with caution.
+
+Otherwise, you might include a C<response> field in C<$something>. If this
+is defined and your object/composing class also supports a method
+C<render_response>, it is called with the following signature:
+
+   $obj->render_response(
+      $c,         # the Mojolicious::Controller of this request
+      $response,  # what you got from $something->{response}
+      $update,    # the last one parsed from the request
+   );
+
+For example, the Telegram Bot API supports returning an answer message
+directly as a response to the webhook call... why not use it if useful?
+
+=item *
+
+otherwise, a status C<204 No Content> is answered to the webhook call.
+
+=back
+
+=head1 ACCESSORS
+
+The following methods have a same-named option that can be passed to the
+constructor.
+
+=head2 B<< app >>
+
+   my $app = $obj->app;
+
+Read-only accessor for the app object, which CAN be set in the
+construction. Optionally used by L</install_route>, unless it has
+parameter C<routes> in its arguments list. It should comply to the
+L<Mojolicious> object interface.
+
+=head2 B<< custom_pairs >>
+
+   my $hash_ref = $obj->custom_pairs;
+   $obj->custom_pairs(\%some_key_value_pairs);
+
+Accessor for custom key/value pairs. Method L</source_custom_pairs> adds
+them in the C<source> section of the record passed to L</process> (unless
+you override L</source_custom_pairs> and forget about C<custom_pairs>, of
+course).
+
+=head2 B<< method >>
+
+   my $method = $obj->method;
+
+Read-only accessor for the method to be used as default by
+L</install_route>. Defaults to C<post>.
+
+=head2 B<< path >>
+
+   my $path = $obj->path;
+
+Read-only accessor for the path that is used for setting the route in the
+L<Mojolicious> app by L</install_route>. If not present, it is derived
+(lazily) from L</url>. If neither one is present, an exception is thrown
+via L<Ouch> (with code C<500>). The lazy loading is done by
+L</BUILD_path>.
+
+=head2 B<< processor >>
+
+   my $processor_sub = $obj->processor;
+
+Read-only accessor for a processor sub reference.
+
+By default, L</process> calls this to retrieve a sub reference that will
+be called with the update record. You might want to look at
+L<Data::Tubes>, although anything supporting the L</process> interface
+will do.
+
+=head2 B<< typename >>
+
+   my $name = $obj->typename;
+
+Read-only accessor to the type of this source of messages. See
+L<BUILD_typename> for the default value generated from the class name.
+
+=head2 B<< url >>
+
+   my $url = $obj->url;
+
+Read-only accessor for the URL where your webhook lives, if available.
+Possibly used by L</BUILD_processor>.
+
+=head1 METHODS
+
+=head2 B<< BUILD_path >>
+
+Builder for L</path>. Auto-extracts the path from L</url>. You can
+override this in your composing class.
+
+=head2 B<< BUILD_processor >>
+
+Builder for L</processor>. Throws an exception. You can override this in
+your composing class.
+
+=head2 B<< BUILD_typename >>
+
+Builder for L</typename>. It is derived from the class name by getting the
+last meaningful part, see examples below:
+
+   WebHook                          --> webhook
+   Bot::ChatBots::Telegram::WebHook --> telegram
+   Bot::ChatBots::Whatever          --> whatever
+
+In simple terms:
+
+=over
+
+=item *
+
+if the class name has one single part only, take it
+
+=item *
+
+otherwise, take last if it's not C<webhook> (case-insensitively)
+
+=item *
+
+otherwise get the previous to last. This lets you call your class
+C<Something::WebHook> and get C<something> back, which makes more sense
+than taking C<webhook> (as it would probably be the name for a lot of
+adapters!).
+
+=back
+
+Of course you can set L</typename> directly on construction if you want.
+
+=head2 B<< handler >>
+
+   my $subref = $obj->handler(%args);
+      $subref = $obj->handler(\%args);
+
+Return a subroutine reference suitable for being installed as a route in
+L<Mojolicious>; it is used by L</install_route> behind the scenes.
+
+See L</DESCRIPTION> for its behaviour.
+
+=head2 B<< install_route >>
+
+   my $route = $obj->install_route(%args); # OR
+      $route = $obj->install_route(\%args);
+
+Sets a route in L<Mojolicious> for listening to the webhook calls. The
+input arguments in C<%arg> are:
+
+=over
+
+=item C<method> 
+
+the method of the registered route. Defaults to L</method>. Note that it
+is used in its lowercase form.
+
+=item C<path>
+
+the path associated to the route. Defaults to L</path>.
+
+=item C<routes>
+
+the L<Mojolicious::Routes> where the new route should be installed. By
+default, L</app> is used to retrieve the routes via C<< $obj->app->routes
+>>.
+
+=back
+
+=head2 B<< process >>
+
+   my $outcome = $obj->process($hashref);
+
+Process an incoming record. This is built starting from each single update
+returned by L</parse_request>, with additional data to provide context to
+the following processing elements (so that you can theoretically build
+a generic processor for updates coming from different sources).
+
+See L</DESCRIPTION> for the shape of C<$hashref>.
+
+By default it is a thin wrapper around L</processor>, in order to ease
+your library's client to provide a processing sub reference.
+
+=head2 B<< source_custom_pairs >>
+
+   my @pairs = $obj->source_custom_pairs;
+
+Returns a list of I<custom> key/value pairs to be added in the C<source>
+section of the record passed to L</process>. By default takes whatever is
+inside L</custom_pairs>, expanding the hash reference to a list.
+
+=head1 REQUIRED METHODS
+
+This class defines a L<Moo::Role>, so it's not a standalone thing by
+itself. The following methods are I<required> to exist in the class that
+composes this role.
+
+=head2 B<< parse_request >>
+
+   my @updates = $obj->parse_request($c->req);
+
+Parse a single L<Mojo::Message::Request> and return all the updates
+inside. For some perspective, the Telegram Bot API only delivers one
+single update per call, while the Facebook Messenger API can deliver
+a batch of updates all in one single WebHook call.
+
+
+=head1 SEE ALSO
+
+L<Bot::ChatBots>, L<Bot::ChatBots::Telegram::WebHook> and
+L<Bot::ChatBots::Messenger::WebHook>.
+
+=head1 AUTHOR
+
+Flavio Poletti <polettix@cpan.org>
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright (C) 2016 by Flavio Poletti <polettix@cpan.org>
+
+This module is free software. You can redistribute it and/or modify it
+under the terms of the Artistic License 2.0.
+
+This program is distributed in the hope that it will be useful, but
+without any warranty; without even the implied warranty of
+merchantability or fitness for a particular purpose.
+
+=cut
