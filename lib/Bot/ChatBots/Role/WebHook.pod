@@ -12,6 +12,10 @@ Bot::ChatBots::Role::WebHook - Bot::ChatBots Role for WebHooks
    use Moo;
    with 'Bot::ChatBots::Role::WebHook';
 
+   sub normalize_record {
+      return shift; # not much of a normalization, huh?
+   }
+
    sub parse_request {
       my ($self, $request) = @_;
       my @updates = $request->json;
