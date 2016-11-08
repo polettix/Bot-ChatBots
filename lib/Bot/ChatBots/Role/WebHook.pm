@@ -9,6 +9,7 @@ use Try::Tiny;
 
 use Moo::Role;
 
+requires 'normalize_record';
 requires 'parse_request';
 
 has app => (
@@ -69,6 +70,11 @@ sub BUILD_typename {
    );
 }
 
+sub class_custom_pairs {
+   my $self = shift;
+   return %{$self->custom_pairs};
+}
+
 sub handler {
    my $self = shift;
    my $args = (@_ && ref($_[0])) ? $_[0] : {@_};
@@ -81,7 +87,8 @@ sub handler {
          app  => $self->app,
       ),
       type  => $self->typename,
-      $self->source_custom_pairs,
+      $self->class_custom_pairs,
+      %{$self->custom_pairs},
    };
 
    return sub {
@@ -146,11 +153,6 @@ sub install_route {
 sub process {
    my $self = shift;
    return $self->processor->(@_);
-}
-
-sub source_custom_pairs {
-   my $self = shift;
-   return %{$self->custom_pairs};
 }
 
 1;

@@ -37,6 +37,8 @@ Bot::ChatBots::Role::WebHook - Bot::ChatBots Role for WebHooks
 This is an updates receiver and dispatcher role for defining WebHooks
 (i.e. when the platform pushes updates through a webhook).
 
+=head2 Operation Model
+
 The generic model is the following:
 
 =over
@@ -73,8 +75,8 @@ input hash reference:
          }
          type => $typename,   # defaults to lc() of last part of class name
 
-         $obj->source_custom_pairs, # whatever you want to add...
-
+         $obj->class_custom_pairs, # whatever you want to add...
+         @{$obj->custom_pairs},    # whatever you client wants to add
       },
       stash  => $hashref,
       update => $update_object_parsed_by_parse_request,
@@ -109,6 +111,45 @@ otherwise, a status C<204 No Content> is answered to the webhook call.
 
 =back
 
+
+=head2 What Should You Provide/Override
+
+This is what you should provide and probably override in the general case:
+
+=over
+
+=item *
+
+C<BUILD> to make sure the route is installed, like this:
+
+   sub BUILD {
+      my $self = shift;
+      $self->install_route;
+   }
+
+=item *
+
+L</normalize_record> is mandatory and it allows you to provide a "default"
+shape to the records, in order to make life easier to the tube down along
+the road;
+
+=item *
+
+L</parse_request> is mandatory and is how you get from
+a L<Mojo::Message::Request> object to an update
+
+=item *
+
+L</render_response> is something you MIGHT want to provide if it makes
+sense
+
+=item *
+
+L</class_custom_pairs> might be overridden to always include
+class-specific key/value pairs, e.g. a token if it exists.
+
+=back
+
 =head1 ACCESSORS
 
 The following methods have a same-named option that can be passed to the
@@ -128,10 +169,8 @@ L<Mojolicious> object interface.
    my $hash_ref = $obj->custom_pairs;
    $obj->custom_pairs(\%some_key_value_pairs);
 
-Accessor for custom key/value pairs. Method L</source_custom_pairs> adds
-them in the C<source> section of the record passed to L</process> (unless
-you override L</source_custom_pairs> and forget about C<custom_pairs>, of
-course).
+Accessor for custom key/value pairs. These are expanded in the C<source>
+section of the record passed to L</process>.
 
 =head2 B<< method >>
 
@@ -226,6 +265,14 @@ adapters!).
 
 Of course you can set L</typename> directly on construction if you want.
 
+=head2 B<< class_custom_pairs >>
+
+   my @pairs = $obj->class_custom_pairs;
+
+Returns a list of I<custom> key/value pairs to be added in the C<source>
+section of the record passed to L</process>, specific to the class (see
+also L</custom_pairs>.
+
 =head2 B<< handler >>
 
    my $subref = $obj->handler(%args);
@@ -277,19 +324,18 @@ See L</DESCRIPTION> for the shape of C<$hashref>.
 By default it is a thin wrapper around L</processor>, in order to ease
 your library's client to provide a processing sub reference.
 
-=head2 B<< source_custom_pairs >>
-
-   my @pairs = $obj->source_custom_pairs;
-
-Returns a list of I<custom> key/value pairs to be added in the C<source>
-section of the record passed to L</process>. By default takes whatever is
-inside L</custom_pairs>, expanding the hash reference to a list.
-
 =head1 REQUIRED METHODS
 
 This class defines a L<Moo::Role>, so it's not a standalone thing by
 itself. The following methods are I<required> to exist in the class that
 composes this role.
+
+=head2 B<< normalize_record >>
+
+   my $record = $obj->normalize_record($input_record);
+
+Give C<$input_record> a possibly better shape to allow for tubes down
+along the road to work on a common format.
 
 =head2 B<< parse_request >>
 
