@@ -12,6 +12,13 @@ has callback => (
    clearer   => 1,
 );
 
+has recipient => (
+   is        => 'rw',
+   lazy      => 1,
+   predicate => 1,
+   clearer   => 1,
+);
+
 has ua => (
    is      => 'rw',
    lazy    => 1,

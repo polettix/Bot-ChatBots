@@ -51,6 +51,13 @@ constructor.
 Accessor for a possible callback sub reference. This is/can be used when
 callling L<Mojo::UserAgent> in non-blocking mode.
 
+=head2 B<< recipient >>
+
+   my $recipient = $obj->recipient;
+   $obj->recipient($some_id);
+
+Accessor for a possible default recipient of messages sent by this sender.
+
 =head2 B<< ua >>
 
    my $ua = $obj->ua;
@@ -74,11 +81,23 @@ L<Mojo::UserAgent>.
 
 Remove any L</callback> currently set.
 
+=head2 B<< clear_recipient >>
+
+   $obj->clear_recipient;
+
+Remove any default L</recipient> currently set.
+
 =head2 B<< has_callback >>
 
    say 'yes' if $obj->has_callback;
 
 Predicate function to assess whethere a L</callback> is set or not.
+
+=head2 B<< has_recipient >>
+
+   say 'yes' if $obj->has_recipient;
+
+Predicate function to assess whethere a L</recipient> is set or not.
 
 =head2 B<< ua_request >>
 
