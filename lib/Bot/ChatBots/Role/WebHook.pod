@@ -138,7 +138,7 @@ course).
    my $method = $obj->method;
 
 Read-only accessor for the method to be used as default by
-L</install_route>. Defaults to C<post>.
+L</install_route>. Defaults to whatever L</BUILD_method> says.
 
 =head2 B<< path >>
 
@@ -176,6 +176,13 @@ Read-only accessor for the URL where your webhook lives, if available.
 Possibly used by L</BUILD_processor>.
 
 =head1 METHODS
+
+It should be safe to override the following methods in your classes
+composing this role.
+
+=head2 B<< BUILD_method >>
+
+Builder for L</method>. Defaults to C<post>.
 
 =head2 B<< BUILD_path >>
 
