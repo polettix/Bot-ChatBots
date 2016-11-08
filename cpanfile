@@ -5,6 +5,7 @@ requires 'Moo',             '2.002005';
 requires 'Module::Runtime', '0.014';
 requires 'Ouch',            '0.0410';
 requires 'Try::Tiny',       '0.27';
+requires 'Mojolicious',     '7.10';
 
 on test => sub {
    requires 'Test::More',      '0.88';
@@ -16,5 +17,4 @@ on test => sub {
 on develop => sub {
    requires 'Path::Tiny',        '0.096';
    requires 'Template::Perlish', '1.52';
-   requires 'Mojolicious',       '7.10';
 };
