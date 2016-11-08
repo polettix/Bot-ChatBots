@@ -3,6 +3,7 @@ requires 'Log::Any',        '1.042';
 requires 'Mo',              '0.040';
 requires 'Moo',             '2.002005';
 requires 'Module::Runtime', '0.014';
+requires 'Ouch',            '0.0410';
 
 on test => sub {
    requires 'Test::More',      '0.88';
