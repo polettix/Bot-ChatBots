@@ -1,0 +1,136 @@
+=pod
+
+=encoding utf8
+
+=head1 NAME
+
+Bot::ChatBots::Role::Sender - Bot::ChatBots Role for Senders
+
+=head1 SYNOPSIS
+
+   package Bot::ChatBots::Whatever::Sender;
+   use Moo;
+   with 'Bot::ChatBots::Role::Sender';
+
+   sub send_message {
+      my ($self, $message) = @_;
+      $self->ua_request(
+         GET => 'http://frobozz.example.com/v1/whatever',
+         {Accept => 'application/json'},
+         json => $message
+      );
+   }
+   1;
+
+=head1 DESCRIPTION
+
+This is a sender role for bots.
+
+=head2 What Should You Provide/Override
+
+This is what you should provide and probably override in the general case:
+
+=over
+
+=item *
+
+L</send_message> is mandatory and it is where you actually send messages.
+
+=back
+
+=head1 ACCESSORS
+
+The following methods have a same-named option that can be passed to the
+constructor.
+
+=head2 B<< callback >>
+
+   my $cb = $obj->callback;
+   $obj->callback(sub {...});
+
+Accessor for a possible callback sub reference. This is/can be used when
+callling L<Mojo::UserAgent> in non-blocking mode.
+
+=head2 B<< ua >>
+
+   my $ua = $obj->ua;
+   $obj->ua(Mojo::UserAgent->new);
+
+Accessor for a L<Mojo::UserAgent> compatible object.
+
+=head1 METHODS
+
+It should be safe to override the following methods in your classes
+composing this role.
+
+=head2 B<< BUILD_ua >>
+
+Builder for L</ua>. Defaults to a new fresh instance of
+L<Mojo::UserAgent>.
+
+=head2 B<< clear_callback >>
+
+   $obj->clear_callback;
+
+Remove any L</callback> currently set.
+
+=head2 B<< has_callback >>
+
+   say 'yes' if $obj->has_callback;
+
+Predicate function to assess whethere a L</callback> is set or not.
+
+=head2 B<< ua_request >>
+
+   $obj->ua_request($method, @parameters);
+
+This is a wrapper around different C<$method> methods available in
+L<Mojo::UserAgent>. For example, this call:
+
+   $obj->ua_request(get => @parameters);
+
+translates into this:
+
+   $obj->ua->get(@parameters);
+
+If a L</callback> is available (see L</has_callback>), it is appended to
+the C<@parameters> I<unless> the last item is a sub reference itself. In
+either cases, C<Mojo::IOLoop> is started unless it's already running.
+
+Returns whatever the call to L<Mojo::UserAgent> returns.
+
+
+=head1 REQUIRED METHODS
+
+This class defines a L<Moo::Role>, so it's not a standalone thing by
+itself. The following methods are I<required> to exist in the class that
+composes this role.
+
+=head2 B<< send_message >>
+
+   $obj->send_message($message);
+
+Do actual sending of a message. This method can leverage on L</ua> or
+L</ua_request> to do the actual network traffic.
+
+=head1 SEE ALSO
+
+L<Bot::ChatBots>, L<Bot::ChatBots::Telegram::Sender> and
+L<Bot::ChatBots::Messenger::Sender>.
+
+=head1 AUTHOR
+
+Flavio Poletti <polettix@cpan.org>
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright (C) 2016 by Flavio Poletti <polettix@cpan.org>
+
+This module is free software. You can redistribute it and/or modify it
+under the terms of the Artistic License 2.0.
+
+This program is distributed in the hope that it will be useful, but
+without any warranty; without even the implied warranty of
+merchantability or fitness for a particular purpose.
+
+=cut
