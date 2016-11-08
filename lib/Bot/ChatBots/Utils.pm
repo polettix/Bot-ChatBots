@@ -1,6 +1,6 @@
 package Bot::ChatBots::Utils;
 use strict;
-{ our $VERSION = '0.001008'; }
+{ our $VERSION = '0.001009'; }
 
 use Exporter 'import';
 use Module::Runtime qw< use_module >;
