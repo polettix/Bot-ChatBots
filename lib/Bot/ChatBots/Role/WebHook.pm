@@ -5,6 +5,7 @@ use Mojo::URL;
 use Log::Any qw< $log >;
 use Scalar::Util qw< weaken >;
 use Bot::ChatBots::Weak;
+use Try::Tiny;
 
 use Moo::Role;
 
