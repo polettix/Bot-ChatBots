@@ -1,4 +1,6 @@
 package Bot::ChatBots::Role::WebHook;
+use strict;
+{ our $VERSION = '0.001004'; }
 
 use Ouch;
 use Mojo::URL;
