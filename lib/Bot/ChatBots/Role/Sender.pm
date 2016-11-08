@@ -22,7 +22,7 @@ has recipient => (
 has ua => (
    is      => 'rw',
    lazy    => 1,
-   default => 'BUILD_ua',
+   builder => 'BUILD_ua',
 );
 
 sub BUILD_ua {
