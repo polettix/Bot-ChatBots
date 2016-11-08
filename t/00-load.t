@@ -4,6 +4,11 @@ use strict;
 use Test::More;
 use Path::Tiny;
 
+my $has_mojo_base = eval {
+   require Mojo::Base;
+   1;
+};
+
 my $dir  = path(__FILE__)->parent(2)->child('lib');
 my $iter = $dir->iterator(
    {
@@ -17,6 +22,7 @@ while (my $path = $iter->()) {
    my $module = $path->relative($dir); # get relative path...
    $module =~ s{ \.pm \z}{}gmxs;       # ... and transform it...
    $module =~ s{/}{::}gmxs;            # ... into a module name
+   next if $module eq 'Bot::ChatBots::MojoPlugin' && ! $has_mojo_base;
    require_ok($module)
      or BAIL_OUT("can't load $module");
 } ## end while (my $path = $iter->...)
