@@ -1,6 +1,6 @@
 package Bot::ChatBots::Base;
 use strict;
-{ our $VERSION = '0.001006'; }
+{ our $VERSION = '0.001007'; }
 
 use Log::Any ();
 use Mo;
