@@ -41,10 +41,9 @@ sub pipeline {
 sub resolve_module {
    my ($name, $prefix) = @_;
    $prefix //= 'Bot::ChatBots';
-   return $prefix . $name if substr($name, 0, 2) eq '::';
-   return substr($name, 1) if substr($name, 0, 1) eq '!';
-   return $prefix . '::' . $name if $name !~ m{::}mxs;
-   return $name;
+   return substr($name, 1) if $name =~ m{\A[+^]}mxs;
+   $name =~ s{^(::)?}{::}mxs;    # ensure separating "::" in front of $name
+   return $prefix . $name;
 } ## end sub resolve_module
 
 42;

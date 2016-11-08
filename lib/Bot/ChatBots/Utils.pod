@@ -22,9 +22,11 @@ Bot::ChatBots::Utils - Utility functions for Bot::ChatBots
    # nothing is printed here
 
    resolve_module('Duh');        # returns 'Bot::ChatBots::Duh'
-   resolve_module('Foo::Bar');   # returns 'Foo::Bar'
-   resolve_module('!Duh');       # returns 'Duh'
-   resolve_module('::Foo::Bar'); # returns 'Bot::ChatBots::Foo::Bar'
+   resolve_module('^Duh');       # returns 'Duh'
+   resolve_module('+Duh');       # ditto, least surprise principle
+   resolve_module('^Foo::Bar');  # returns 'Foo::Bar'
+   resolve_module('Foo::Bar');   # returns 'Bot::ChatBots::Foo::Bar'
+   resolve_module('::Foo::Bar'); # ditto, loud about needing prefix
 
    # transform $something using resolve_module, load it and return
    # the loaded class name
@@ -97,30 +99,26 @@ transformation rules are as follows:
 
 *
 
-if C<$spec> starts with two colons C<::>, then C<$prefix . $spec> is
-returned, ELSE
+if C<$spec> starts with a caret C<^> or a plus sign C<+>, the C<$spec> is
+returned after the initial character is removed. These two characters are
+aliased to cope with a long tradition of using C<+> for this (although in
+other contexts C<+> means I<add>, which naturally translates into I<add
+a prefix> in my very humble opinion), ELSE
+
 
 *
 
-if C<$spec> starts with an exclamation point C<!>, the first character is
-removed and the rest of the string is returned without further processing,
-ELSE
-
-*
-
-if C<$spec> does NOT contain the C<::> sequence, the string C<$prefix
-. '::' . $spec> is returned, ELSE
-
-*
-
-if none of the above apply, the provided C<$spec> is returned namely.
+C<$spec> is pre-pended with C<::> (unless it already has them) and C<$prefix .
+$spec> is returned. (You might want to explicitly put the C<::> in front of
+your sub-module name to document the fact that you actually want the prefix to
+be added, otherwise you can just let C<resolve_module> put that for you).
 
 =back
 
-The net result is that single names (like C<Foo> or C<WhatEver>) get
-prefixed, stuff resembling a full module name are preserved, but you can
-force prefixing by pre-pending C<::> or you can disable prefixing by
-pre-pending an exclamation mark.
+The net result is that the C<$prefix> is used in the default case (i.e. no
+initial special character), but you can start with C<::> if you want to
+document the prefixing or start with C<^> (or C<+>) if you want to skip
+prefixing. See L</SYNOPSIS> for some examples.
 
 =head1 SEE ALSO
 
