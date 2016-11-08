@@ -112,7 +112,7 @@ sub handler {
       for my $i (0 .. $n_updates) {
          $update = $updates[$i];
          try {
-            $outcome = $self->process(
+            my $record = $self->normalize_record(
                {
                   batch  => {
                      count => ($i + 1),
@@ -123,6 +123,7 @@ sub handler {
                   update => $update,
                }
             );
+            $outcome = $self->process($record);
             1;
          } ## end try
          catch {
