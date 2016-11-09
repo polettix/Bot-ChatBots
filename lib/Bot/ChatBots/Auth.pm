@@ -1,6 +1,6 @@
 package Bot::ChatBots::Auth;
 use strict;
-{ our $VERSION = '0.001010'; }
+{ our $VERSION = '0.001011'; }
 
 use Mo qw< default >;
 extends 'Bot::ChatBots::Base';
