@@ -131,7 +131,7 @@ sub handler {
          };
       }
 
-      if ($outcome) {    # give the outcome a try
+      if (ref($outcome) eq 'HASH') {    # give the outcome a try
          return if $outcome->{rendered};
          if (defined(my $response = $outcome->{response})) {
             return $self->render_response($c, $response, $update)
