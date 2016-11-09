@@ -58,6 +58,18 @@ callling L<Mojo::UserAgent> in non-blocking mode.
 
 Accessor for a possible default recipient of messages sent by this sender.
 
+=head2 B<< start_loop >
+
+   say 'loop starts automatically' if $obj->start_loop;
+   $obj->start_loop(0); # don't start automatically
+   $obj->start_loop(1); # start loop automatically
+
+Accessor for boolean attribute that instructs L</ua_request> to start the
+L<Mojo::IOLoop> automatically. This can still be overridden by anything
+passed with key C<start_loop> in L</ua_request>.
+
+Defaults to C<0> (I<false>).
+
 =head2 B<< ua >>
 
    my $ua = $obj->ua;
@@ -99,14 +111,45 @@ Predicate function to assess whethere a L</callback> is set or not.
 
 Predicate function to assess whethere a L</recipient> is set or not.
 
+=head2 B<< may_start_loop >>
+
+   $self->may_start_loop(%args);
+
+Evaluates conditions for starting L<Mojo::IOLoop>. These conditions are:
+
+=over
+
+=item *
+
+if the provided C<%args> contains a key C<start_loop>, it is used to
+establish whether to start the loop or not, OTHERWISE
+
+=item *
+
+if L</start_loop> is I<false>, the loop is not started, OTHERWISE
+
+=item *
+
+the loop is started if it's not already running.
+
+=back
+
+This method is used by L</ua_request>.
+
+It is suggested to use this method only if you are also using a callback
+in your call. Assuming that C<@callback> contains a callback or not, you
+might want to call this method like this:
+
+   $obj->may_start_loop(%args) if @callback;
+
 =head2 B<< ua_request >>
 
-   $obj->ua_request($method, @parameters);
+   $obj->ua_request($method, %args);
 
 This is a wrapper around different C<$method> methods available in
 L<Mojo::UserAgent>. For example, this call:
 
-   $obj->ua_request(get => @parameters);
+   $obj->ua_request(get => ua_args => \@parameters);
 
 translates into this:
 
@@ -118,6 +161,23 @@ either cases, C<Mojo::IOLoop> is started unless it's already running.
 
 Returns whatever the call to L<Mojo::UserAgent> returns.
 
+The recognised keys in C<%args> are the following:
+
+=over
+
+=item C<start_loop>
+
+in case there is a callback, this flag tells C<ua_request> to start the
+L<Mojo::IOLoop> if it's not already running. Defaults to what set in
+accessor L</start_loop>.
+
+=item C<ua_args>
+
+the argument list for L<Mojo::UserAgent>. This might be I<extended> if it
+does not contain a callback but the object L</has_callback>.
+
+=back
+
 
 =head1 REQUIRED METHODS
 
@@ -127,7 +187,7 @@ composes this role.
 
 =head2 B<< send_message >>
 
-   $obj->send_message($message);
+   $obj->send_message($message, %args);
 
 Do actual sending of a message. This method can leverage on L</ua> or
 L</ua_request> to do the actual network traffic.
