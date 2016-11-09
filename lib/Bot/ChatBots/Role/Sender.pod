@@ -58,7 +58,7 @@ callling L<Mojo::UserAgent> in non-blocking mode.
 
 Accessor for a possible default recipient of messages sent by this sender.
 
-=head2 B<< start_loop >
+=head2 B<< start_loop >>
 
    say 'loop starts automatically' if $obj->start_loop;
    $obj->start_loop(0); # don't start automatically
