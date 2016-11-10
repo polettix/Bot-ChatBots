@@ -3,9 +3,6 @@ use strict;
 { our $VERSION = '0.001011'; }
 
 use Ouch;
-use Mojo::URL;
-use Log::Any qw< $log >;
-use Scalar::Util qw< weaken >;
 use Bot::ChatBots::Weak;
 
 use Moo::Role;
