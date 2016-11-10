@@ -17,19 +17,19 @@ requires 'parse_request';
 requires 'process';
 
 has app => (
-   is => 'ro',
-   lazy => 1,
+   is       => 'ro',
+   lazy     => 1,
    weak_ref => 1,
 );
 
 has method => (
-   is => 'ro',
+   is   => 'ro',
    lazy => 1,
 );
 
 has path => (
-   is => 'ro',
-   lazy => 1,
+   is      => 'ro',
+   lazy    => 1,
    builder => 'BUILD_path',
 );
 
@@ -42,7 +42,7 @@ sub BUILD_path {
    defined(my $url = $self->url)
      or ouch 500, 'undefined path and url for WebHook';
    return Mojo::URL->new($url)->path->to_string;
-}
+} ## end sub BUILD_path
 
 sub handler {
    my $self = shift;
@@ -53,7 +53,8 @@ sub handler {
    return sub {
       my $c = shift;
       $source->{refs}->set(c => $c)
-        if blessed($source->{refs}) && $source->{refs}->isa('Bot::ChatBots::Weak');
+        if blessed($source->{refs})
+        && $source->{refs}->isa('Bot::ChatBots::Weak');
 
       # whatever happens, the bot "cannot" fail or the platform will hammer
       # us with the same update over and over
@@ -72,7 +73,7 @@ sub handler {
          try {
             my $record = $self->normalize_record(
                {
-                  batch  => {
+                  batch => {
                      count => ($i + 1),
                      total => ($n_updates + 1),
                   },
@@ -87,7 +88,7 @@ sub handler {
          catch {
             $log->error(bleep $_);
          };
-      }
+      } ## end for my $i (0 .. $n_updates)
 
       if (ref($outcome) eq 'HASH') {    # give the outcome a try
          return if $outcome->{rendered};
@@ -95,7 +96,7 @@ sub handler {
             return $self->render_response($c, $response, $update)
               if $self->can('render_response');
          }
-      } ## end if ($outcome)
+      } ## end if (ref($outcome) eq 'HASH')
 
       # this is the safe approach - everything went fine, nothing to say
       return $c->rendered(204);
@@ -103,12 +104,12 @@ sub handler {
 } ## end sub handler
 
 sub install_route {
-   my $self = shift;
-   my $args = (@_ && ref($_[0])) ? $_[0] : {@_};
+   my $self   = shift;
+   my $args   = (@_ && ref($_[0])) ? $_[0] : {@_};
    my $method = lc($args->{method} // $self->method // 'post');
-   my $r = $args->{routes} // $self->app->routes;
-   my $p = $args->{path} // $self->path;
+   my $r      = $args->{routes} // $self->app->routes;
+   my $p      = $args->{path} // $self->path;
    return $r->$method($p => $self->handler($args));
-}
+} ## end sub install_route
 
 1;
