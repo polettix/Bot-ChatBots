@@ -1,6 +1,6 @@
 package Bot::ChatBots::Weak;
 use strict;
-{ our $VERSION = '0.001012'; }
+{ our $VERSION = '0.001013'; }
 
 use Scalar::Util qw< weaken >;
 

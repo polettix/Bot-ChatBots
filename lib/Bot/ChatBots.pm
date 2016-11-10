@@ -3,7 +3,7 @@ package Bot::ChatBots;
 use strict;
 use warnings;
 use English qw< -no_match_vars >;
-{ our $VERSION = '0.001012'; }
+{ our $VERSION = '0.001013'; }
 
 1;
 __END__
