@@ -4,11 +4,11 @@ use strict;
 
 use Log::Any qw< $log >;
 
-use Mo qw< default >;
+use Moo;
 
-has channels => (default => sub { return {} });
-has name => (default => sub { return ref($_[0]) || $_[0] });
-has users => (default => sub { return {} });
+has channels => (is => 'rw', default => sub { return {} });
+has name => (is => 'ro', default => sub { return ref($_[0]) || $_[0] });
+has users => (is => 'rw', default => sub { return {} });
 
 sub process {
    my ($self, $record) = @_;
@@ -47,6 +47,6 @@ sub process {
 
    $log->info("$name: no reason to block, allowing");
    return $record;
-} ## end sub authenticate
+} ## end sub process
 
 42;
