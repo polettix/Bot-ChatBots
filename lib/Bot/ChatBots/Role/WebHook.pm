@@ -12,17 +12,14 @@ use Try::Tiny;
 use Moo::Role;
 
 requires 'normalize_record';
+requires 'pack_source';
 requires 'parse_request';
+requires 'process';
 
 has app => (
    is => 'ro',
    lazy => 1,
    weak_ref => 1,
-);
-
-has custom_pairs => (
-   is => 'rw',
-   default => sub { return {} },
 );
 
 has method => (
@@ -36,18 +33,6 @@ has path => (
    builder => 'BUILD_path',
 );
 
-has processor => (
-   is => 'ro',
-   lazy => 1,
-   builder => 'BUILD_processor',
-);
-
-has typename => (
-   is => 'ro',
-   lazy => 1,
-   builder => 'BUILD_typename',
-);
-
 has url => (is => 'ro');
 
 sub BUILD_method { return 'post' }
@@ -59,39 +44,11 @@ sub BUILD_path {
    return Mojo::URL->new($url)->path->to_string;
 }
 
-sub BUILD_processor {
-   ouch 500, 'no processor defined!';
-}
-
-sub BUILD_typename {
-   my $self = shift;
-   my @chunks = split /::/, lc ref $self;
-   return (
-      ((@chunks == 1) || ($chunks[-1] ne 'webhook')) ? $chunks[-1]
-      :                                                $chunks[-2]
-   );
-}
-
-sub class_custom_pairs {
-   my $self = shift;
-   return %{$self->custom_pairs};
-}
-
 sub handler {
    my $self = shift;
    my $args = (@_ && ref($_[0])) ? $_[0] : {@_};
 
-   my $source = {
-      args  => $args,
-      class => ref($self),
-      refs  => Bot::ChatBots::Weak->new(
-         self => $self,
-         app  => $self->app,
-      ),
-      type  => $self->typename,
-      $self->class_custom_pairs,
-      %{$self->custom_pairs},
-   };
+   my $source = $self->pack_source($args);
 
    return sub {
       my $c = shift;
@@ -151,11 +108,6 @@ sub install_route {
    my $r = $args->{routes} // $self->app->routes;
    my $p = $args->{path} // $self->path;
    return $r->$method($p => $self->handler($args));
-}
-
-sub process {
-   my $self = shift;
-   return $self->processor->(@_);
 }
 
 1;

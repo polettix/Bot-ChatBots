@@ -1,0 +1,215 @@
+=pod
+
+=encoding utf8
+
+=head1 NAME
+
+Bot::ChatBots::Role::Source - Bot::ChatBots Role for sources
+
+=head1 SYNOPSIS
+
+   package Bot::ChatBots::Whatever::WebHook;
+   use Moo;
+   with 'Bot::ChatBots::Role::Source';
+   with 'Bot::ChatBots::Role::WebHook';
+
+   sub normalize_record {
+      return shift; # not much of a normalization, huh?
+   }
+
+   sub parse_request {
+      my ($self, $request) = @_;
+      my @updates = $request->json;
+      return @updates;
+   }
+
+   sub render_response {
+      my ($self, $controller, $response, $update) = @_;
+
+      # E.g. Telegram allows you to answer directly...
+      $response = {text => $response} unless ref $response;
+      local $response->{method} = $response->{method}
+         // 'sendMessage';
+      local $response->{chat_id} = $response->{chat_id}
+         // $update->{message}{chat}{id};
+      return $controller->render(json => $response);
+   }
+
+   1;
+
+=head1 DESCRIPTION
+
+This role abstracts elements that identify a source. It is most probably
+used together with L<Bot::ChatBots::Role::WebHook> (which requires a lot
+of its methods) but it doesn't have to.
+
+=head2 What Should You Provide/Override
+
+This is what you should provide and probably override in the general case:
+
+=over
+
+=item *
+
+a C<class_custom_pairs> returning key/value pairs you want to add to the
+source provided back by L</pack_source>;
+
+=item *
+
+either provide a C<processor> (see L</processor>) or override L</process>.
+
+=back
+
+=head1 ACCESSORS
+
+The following methods have a same-named option that can be passed to the
+constructor.
+
+=head2 B<< custom_pairs >>
+
+   my $hash_ref = $obj->custom_pairs;
+   $obj->custom_pairs(\%some_key_value_pairs);
+
+Accessor for custom key/value pairs. These are expanded in the C<source>
+section of the record passed to L</process>.
+
+=head2 B<< processor >>
+
+   my $processor_sub = $obj->processor;
+
+Read-only accessor for a processor sub reference.
+
+By default, L</process> calls this to retrieve a sub reference that will
+be called with the update record. You might want to look at
+L<Data::Tubes>, although anything supporting the L</process> interface
+will do.
+
+=head2 B<< typename >>
+
+   my $name = $obj->typename;
+
+Read-only accessor to the type of this source of messages. See
+L<BUILD_typename> for the default value generated from the class name.
+
+=head1 METHODS
+
+It should be safe to override the following methods in your classes
+composing this role.
+
+=head2 B<< BUILD_processor >>
+
+Builder for L</processor>. Throws an exception. You can override this in
+your composing class.
+
+=head2 B<< BUILD_typename >>
+
+Builder for L</typename>. It is derived from the class name by getting the
+last meaningful part, see examples below:
+
+   WebHook                          --> webhook
+   Bot::ChatBots::Telegram::WebHook --> telegram
+   Bot::ChatBots::Whatever          --> whatever
+
+In simple terms:
+
+=over
+
+=item *
+
+if the class name has one single part only, take it
+
+=item *
+
+otherwise, take last if it's not C<webhook> (case-insensitively)
+
+=item *
+
+otherwise get the previous to last. This lets you call your class
+C<Something::WebHook> and get C<something> back, which makes more sense
+than taking C<webhook> (as it would probably be the name for a lot of
+adapters!).
+
+=back
+
+Of course you can set L</typename> directly on construction if you want.
+
+=head2 B<< pack_source >>
+
+   my $hashref = $obj->pack_source(%args);
+      $hashref = $obj->pack_source(\%args);
+
+Make a nice pack of info available for easy pushing inside a record and
+provide info along the line. This hash reference will most probably be
+available under key C<source> in the record passed to L</process>.
+
+The following fields will be set:
+
+=over
+
+=item C<args>
+
+a reference to the input C<%args>;
+
+=item C<class>
+
+the class name;
+
+=item C<refs>
+
+a L<Bot::ChatBots::Weak> instance containing the following fields:
+
+=over
+
+=item C<app>
+
+if the object C<can('app')>, this field will be filled, otherwise it will
+not be present;
+
+=item C<self>
+
+the instance itself;
+
+=back
+
+=item C<type>
+
+whatever L</typename> returns
+
+=back
+
+After these fields, if the class C<can('class_custom_pairs')>, they are
+retrieved and added. They might override the fields above of course.
+
+After this, all pairs recorded in L</custom_pairs> are added, again
+overriding whatever was already present.
+
+=head2 B<< process >>
+
+   my $outcome = $obj->process($hashref);
+
+Process an incoming record. This is built by the relevant actual source,
+e.g. a webhook or a long-poll based class/object.
+
+By default it is a thin wrapper around L</processor>, in order to ease
+your library's client to provide a processing sub reference.
+
+=head1 SEE ALSO
+
+L<Bot::ChatBots>, L<Bot::ChatBots::Role::WebHook>.
+
+=head1 AUTHOR
+
+Flavio Poletti <polettix@cpan.org>
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright (C) 2016 by Flavio Poletti <polettix@cpan.org>
+
+This module is free software. You can redistribute it and/or modify it
+under the terms of the Artistic License 2.0.
+
+This program is distributed in the hope that it will be useful, but
+without any warranty; without even the implied warranty of
+merchantability or fitness for a particular purpose.
+
+=cut

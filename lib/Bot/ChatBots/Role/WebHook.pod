@@ -10,6 +10,7 @@ Bot::ChatBots::Role::WebHook - Bot::ChatBots Role for WebHooks
 
    package Bot::ChatBots::Whatever::WebHook;
    use Moo;
+   with 'Bot::ChatBots::Role::Source';
    with 'Bot::ChatBots::Role::WebHook';
 
    sub normalize_record {
@@ -39,7 +40,9 @@ Bot::ChatBots::Role::WebHook - Bot::ChatBots Role for WebHooks
 =head1 DESCRIPTION
 
 This is an updates receiver and dispatcher role for defining WebHooks
-(i.e. when the platform pushes updates through a webhook).
+(i.e. when the platform pushes updates through a webhook). It is most
+probably best used with C<Bot::ChatBots::Role::Source>, which provides
+some of the required methods.
 
 =head2 Operation Model
 
@@ -341,6 +344,15 @@ composes this role.
 Give C<$input_record> a possibly better shape to allow for tubes down
 along the road to work on a common format.
 
+=head2 B<< pack_source >>
+
+   my $hashref = $obj->pack_source(%args);
+   my $hashref = $obj->pack_source(\%args);
+
+Get stuff to be put associated to key C<source> in the record passed along
+to L</process>. This is e.g. implemented by
+L<Bot::ChatBots::Role::Source>.
+
 =head2 B<< parse_request >>
 
    my @updates = $obj->parse_request($c->req);
@@ -350,11 +362,15 @@ inside. For some perspective, the Telegram Bot API only delivers one
 single update per call, while the Facebook Messenger API can deliver
 a batch of updates all in one single WebHook call.
 
+=head2 B<< process >>
+
+   my $outcome = $obj->process($record);
+
+Process the record.
 
 =head1 SEE ALSO
 
-L<Bot::ChatBots>, L<Bot::ChatBots::Telegram::WebHook> and
-L<Bot::ChatBots::Messenger::WebHook>.
+L<Bot::ChatBots>, L<Bot::ChatBots::Role::Source>.
 
 =head1 AUTHOR
 
