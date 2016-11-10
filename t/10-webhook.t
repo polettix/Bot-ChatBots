@@ -1,5 +1,5 @@
 use strict;
-use Test::More tests => 19;
+use Test::More tests => 24;
 use Test::Exception;
 use Mojolicious::Lite;
 use Test::Mojo;
@@ -29,23 +29,41 @@ my $t = Test::Mojo->new;
    $wh->reset;
    $t->post_ok('/wh')->status_is(204);
    is scalar($wh->processed), 1, 'something arrived to the process phase';
+
    my ($processed) = $wh->processed;
-   is_deeply $processed->{source}, {what => 'ever'}, 'source';
-   is_deeply $processed->{batch}, {count => 1, total => 1}, 'batch';
-   ok exists($processed->{update}), 'update exists';
-   is $processed->{update}, undef, 'update is undefined';
-   ok exists($processed->{stash}), 'stash exists';
+   ok exists($processed->{refs}), 'refs exists';
+   my $refs = delete $processed->{refs};
+   ok exists($refs->{app}), 'refs.app';
+   isa_ok $refs->{app}, 'Mojolicious';
+   ok exists($refs->{controller}), 'refs.controller';
+   isa_ok $refs->{controller}, 'Mojolicious::Controller';
+   ok exists($refs->{stash}), 'refs.stash';
+
+   is_deeply $processed,
+     {updates => [], source_pairs => {flags => {rendered => 0}}},
+     'rest of processed stuff';
 }
 
 {
    $wh->reset;
    $t->post_ok('/wh', json => {hey => 'you'})->status_is(204);
    is scalar($wh->processed), 1, 'something arrived to the process phase';
+
    my ($processed) = $wh->processed;
-   is_deeply $processed->{source}, {what => 'ever'}, 'source';
-   is_deeply $processed->{batch}, {count => 1, total => 1}, 'batch';
-   is_deeply $processed->{update}, {hey => 'you'}, 'update';
-   ok exists($processed->{stash}), 'stash exists';
+   ok exists($processed->{refs}), 'refs exists';
+   my $refs = delete $processed->{refs};
+   ok exists($refs->{app}), 'refs.app';
+   isa_ok $refs->{app}, 'Mojolicious';
+   ok exists($refs->{controller}), 'refs.controller';
+   isa_ok $refs->{controller}, 'Mojolicious::Controller';
+   ok exists($refs->{stash}), 'refs.stash';
+
+   is_deeply $processed,
+     {
+      updates => [{hey => 'you'}],
+      source_pairs => {flags => {rendered => 0}}
+     },
+     'rest of processed stuff';
 }
 
 done_testing();

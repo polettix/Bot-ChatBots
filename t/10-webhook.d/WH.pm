@@ -12,17 +12,19 @@ has _processed => (
    is => 'rw',
    default => sub { return [] },
 );
-
-sub normalize_record { return $_[1] }
-sub pack_source { return {what => 'ever'} }
-sub parse_request { return $_[1]->json }
-sub process {
-   my ($self, $record) = @_;
-   push @{$self->_processed}, $record;
-   return $record;
-}
-
 sub processed { return @{shift->_processed} }
 sub reset { shift->_processed([]) }
+
+sub parse_request {
+   my $update = $_[1]->json or return;
+   return $update;
+}
+sub process_updates {
+   my $self = shift;
+   my $args = (@_ && ref($_[0])) ? $_[0] : {@_};
+   push @{$self->_processed}, $args;
+   return $args;
+}
+
 
 1;

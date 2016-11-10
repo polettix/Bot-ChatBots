@@ -1,5 +1,5 @@
 use strict;
-use Test::More tests => 20;
+use Test::More tests => 26;
 use Test::Exception;
 use Mojolicious::Lite;
 use Test::Mojo;
@@ -36,15 +36,22 @@ my $t = Test::Mojo->new;
    is scalar(@processed), 1, 'something arrived to the process phase';
    my ($processed) = @processed;
    my $source = {%{$processed->{source}}};
+
    isa_ok $source->{refs}, 'Bot::ChatBots::Weak';
-   delete $source->{refs};
+   my $refs = delete $source->{refs};
+   ok exists($refs->{$_}), $_ for qw< app controller self stash >;
+
    is_deeply $source,
-     {class => 'Whatever::WH', type => 'wh', wow => 'people', args => {}},
+     {
+      class => 'Whatever::WH',
+      type  => 'wh',
+      wow   => 'people',
+      flags => {rendered => 0}
+     },
      'source';
    is_deeply $processed->{batch}, {count => 1, total => 1}, 'batch';
    ok exists($processed->{update}), 'update exists';
    is $processed->{update}, undef, 'update is undefined';
-   ok exists($processed->{stash}), 'stash exists';
 }
 
 {
@@ -53,14 +60,21 @@ my $t = Test::Mojo->new;
    is scalar(@processed), 1, 'something arrived to the process phase';
    my ($processed) = @processed;
    my $source = {%{$processed->{source}}};
+
    isa_ok $source->{refs}, 'Bot::ChatBots::Weak';
-   delete $source->{refs};
+   my $refs = delete $source->{refs};
+   ok exists($refs->{$_}), $_ for qw< app controller self stash >;
+
    is_deeply $source,
-     {class => 'Whatever::WH', type => 'wh', wow => 'people', args => {}},
+     {
+      class => 'Whatever::WH',
+      type  => 'wh',
+      wow   => 'people',
+      flags => {rendered => 0}
+     },
      'source';
    is_deeply $processed->{batch}, {count => 1, total => 1}, 'batch';
    is_deeply $processed->{update}, {hey => 'you'}, 'update';
-   ok exists($processed->{stash}), 'stash exists';
 }
 
 done_testing();

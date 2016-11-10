@@ -24,7 +24,7 @@ isa_ok $wh, 'Whatever::WH';
 is $wh->typename, 'wh', 'typename';
 
 my $source;
-lives_ok { $source = $wh->pack_source(some => 'args') }
+lives_ok { $source = $wh->pack_source(source_pairs => {some => 'args'}) }
 'pack_source lives';
 
 isa_ok $source->{refs}, 'Bot::ChatBots::Weak';
@@ -37,8 +37,8 @@ is_deeply $source,
    type  => 'wh',
    what  => 'ever',
    wow   => 'overrides',
+   some  => 'args',
    this  => 'goes',
-   args  => {some => 'args'}
   },
   'source';
 

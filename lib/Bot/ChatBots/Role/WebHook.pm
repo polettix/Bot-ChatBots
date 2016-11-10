@@ -11,10 +11,8 @@ use Try::Tiny;
 
 use Moo::Role;
 
-requires 'normalize_record';
-requires 'pack_source';
 requires 'parse_request';
-requires 'process';
+requires 'process_updates';
 
 has app => (
    is       => 'ro',
@@ -48,58 +46,38 @@ sub handler {
    my $self = shift;
    my $args = (@_ && ref($_[0])) ? $_[0] : {@_};
 
-   my $source = $self->pack_source($args);
-
    return sub {
       my $c = shift;
-      $source->{refs}->set(c => $c)
-        if blessed($source->{refs})
-        && $source->{refs}->isa('Bot::ChatBots::Weak');
 
       # whatever happens, the bot "cannot" fail or the platform will hammer
       # us with the same update over and over
-      my @updates;
+      my ($exception, @updates);
       try {
          @updates = $self->parse_request($c->req);
       }
       catch {
          $log->error(bleep $_);
+         $exception = [$_];
       };
 
-      my ($update, $outcome);
-      my $n_updates = $#updates;
-      for my $i (0 .. $n_updates) {
-         $update = $updates[$i];
-         try {
-            my $record = $self->normalize_record(
-               {
-                  batch => {
-                     count => ($i + 1),
-                     total => ($n_updates + 1),
-                  },
-                  source => $source,
-                  stash  => $c->stash,
-                  update => $update,
-               }
-            );
-            $outcome = $self->process($record);
-            1;
-         } ## end try
-         catch {
-            $log->error(bleep $_);
-         };
-      } ## end for my $i (0 .. $n_updates)
+      die $exception->[0] if $exception && $self->should_rethrow($args);
 
-      if (ref($outcome) eq 'HASH') {    # give the outcome a try
-         return if $outcome->{rendered};
-         if (defined(my $response = $outcome->{response})) {
-            return $self->render_response($c, $response, $update)
-              if $self->can('render_response');
-         }
-      } ## end if (ref($outcome) eq 'HASH')
+      my %flags = (rendered => 0);
+      my @retval = $self->process_updates(
+         refs => {
+            app        => $self->app,
+            controller => $c,
+            stash      => $c->stash,
+         },
+         source_pairs => {
+            flags => \%flags,
+         },
+         updates => \@updates,
+         %$args, # may override it all!
+      );
 
-      # this is the safe approach - everything went fine, nothing to say
-      return $c->rendered(204);
+      # did anyone set the flag? Otherwise stick to the safe side
+      return $flags{rendered} || $c->rendered(204);
    };
 } ## end sub handler
 
