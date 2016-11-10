@@ -5,7 +5,7 @@ use strict;
 use Ouch;
 use Mojo::URL;
 use Log::Any qw< $log >;
-use Scalar::Util qw< weaken >;
+use Scalar::Util qw< blessed weaken >;
 use Bot::ChatBots::Weak;
 use Try::Tiny;
 
@@ -52,7 +52,8 @@ sub handler {
 
    return sub {
       my $c = shift;
-      $source->{refs}->set(c => $c);
+      $source->{refs}->set(c => $c)
+        if blessed($source->{refs}) && $source->{refs}->isa('Bot::ChatBots::Weak');
 
       # whatever happens, the bot "cannot" fail or the platform will hammer
       # us with the same update over and over
