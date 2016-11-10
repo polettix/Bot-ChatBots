@@ -1,6 +1,5 @@
 requires 'perl',            '5.010';
 requires 'Log::Any',        '1.042';
-requires 'Mo',              '0.040';
 requires 'Moo',             '2.002005';
 requires 'Module::Runtime', '0.014';
 requires 'Ouch',            '0.0410';
@@ -12,6 +11,7 @@ on test => sub {
    requires 'Path::Tiny',      '0.096';
    requires 'Mock::Quick',     '1.111';
    requires 'Test::Exception', '0.43';
+   requires 'Test::Trap';    # for Ouch, apparently
 };
 
 on develop => sub {
