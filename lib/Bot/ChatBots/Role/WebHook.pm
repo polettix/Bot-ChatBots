@@ -51,16 +51,14 @@ sub handler {
 
       # whatever happens, the bot "cannot" fail or the platform will hammer
       # us with the same update over and over
-      my ($exception, @updates);
+      my @updates;
       try {
          @updates = $self->parse_request($c->req);
       }
       catch {
          $log->error(bleep $_);
-         $exception = [$_];
+         die $_ if $self->should_rethrow($args);
       };
-
-      die $exception->[0] if $exception && $self->should_rethrow($args);
 
       my %flags = (rendered => 0);
       my @retval = $self->process_updates(
