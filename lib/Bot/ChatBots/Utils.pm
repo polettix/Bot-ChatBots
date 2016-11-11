@@ -24,7 +24,7 @@ sub pipeline {
    $opts{tap} //= sub { ($_[0]->())[0] }
      unless exists $opts{pump};
 
-   return Data::Tubes::pipeline(@defs, \%opts);
+   return Data::Tubes::pipeline(@_, \%opts);
 } ## end sub pipeline
 
 sub resolve_module {
