@@ -84,6 +84,7 @@ Predicate function to assess whethere a L</callback> is set or not.
 =head2 B<< may_start_loop >>
 
    $self->may_start_loop(%args);
+   $self->may_start_loop(\%args);
 
 Evaluates conditions for starting L<Mojo::IOLoop>. These conditions are:
 
