@@ -14,7 +14,7 @@ sub load_module { return use_module(resolve_module(@_)) }
 sub pipeline {
    return $_[0] if (@_ == 1) && (ref($_[0]) eq 'CODE');
 
-   state $loaded = eval "use Data::Tubes '0.736'; 1"
+   state $loaded = eval "use Data::Tubes '0.735002'; 1"
      or ouch 500, 'need Data::Tubes at least 0.736 for pipeline()';
 
    my %opts;
