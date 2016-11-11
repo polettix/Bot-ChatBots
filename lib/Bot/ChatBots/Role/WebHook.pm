@@ -11,6 +11,7 @@ use Try::Tiny;
 
 use Moo::Role;
 
+with 'Bot::ChatBots::Role::Source';
 requires 'parse_request';
 requires 'process_updates';
 

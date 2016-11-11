@@ -9,7 +9,7 @@ BEGIN {
    unshift @INC, $subdir;
 }
 
-throws_ok { require WH2 } qr{missing\ process}mxs,
+throws_ok { require WH2 } qr{missing\ parse_request}mxs,
   'one method is not implemented';
 
 my $wh;

@@ -15,6 +15,8 @@ has _processed => (
 sub processed { return @{shift->_processed} }
 sub reset { shift->_processed([]) }
 
+sub normalize_record { return $_[1] }
+
 sub parse_request {
    my $update = $_[1]->json or return;
    return $update;
