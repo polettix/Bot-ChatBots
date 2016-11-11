@@ -1,5 +1,5 @@
 use strict;
-use Test::More;    # tests => 24;
+use Test::More tests => 32;
 use Test::Exception;
 use Mock::Quick;
 

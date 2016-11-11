@@ -1,5 +1,5 @@
 use strict;
-use Test::More;
+use Test::More tests => 27;
 use Test::Exception;
 use Scalar::Util qw< isweak >;
 use Bot::ChatBots::Weak;
