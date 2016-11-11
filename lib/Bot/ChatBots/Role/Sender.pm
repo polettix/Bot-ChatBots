@@ -3,6 +3,7 @@ use strict;
 { our $VERSION = '0.001015'; }
 
 use Moo::Role;
+with 'Bot::ChatBots::Role::Processor';
 requires 'send_message';
 
 has recipient => (
@@ -20,10 +21,5 @@ sub process {
 
    return $record;    # pass-through anyway
 } ## end sub process
-
-sub processor {
-   my $self = shift;
-   return sub { return $self->process(@_) };
-}
 
 1;

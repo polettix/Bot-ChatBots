@@ -53,6 +53,10 @@ Accessor for a possible default recipient of messages sent by this sender.
 
 =head1 METHODS
 
+This module composes role L<Bot::ChatBots::Role::Processor>, inheriting
+all its methods (specifically,
+L<Bot::ChatBots::Role::Processor/processor>).
+
 It should be safe to override the following methods in your classes
 composing this role.
 
@@ -77,13 +81,6 @@ exists call L</send_message> with it, recording the outcome in key
 C<sent_message>.
 
 In any case, the C<$input> is the returned as C<$output>.
-
-=head2 B<< processor >>
-
-   my $subref = $obj->processor;
-
-Wrapper around L</process> to return a L<Data::Tube>-compliant function
-that is suitable to put e.g. in a L<Data::Tube/pipeline>.
 
 =head1 REQUIRED METHODS
 
