@@ -1,6 +1,6 @@
 package Bot::ChatBots::Auth;
 use strict;
-{ our $VERSION = '0.001019'; }
+{ our $VERSION = '0.002'; }
 
 use Log::Any qw< $log >;
 
