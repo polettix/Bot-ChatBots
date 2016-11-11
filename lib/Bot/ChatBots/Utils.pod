@@ -8,18 +8,7 @@ Bot::ChatBots::Utils - Utility functions for Bot::ChatBots
 
 =head1 SYNOPSIS
 
-   use Bot::ChatBots qw< guard load_module resolve_module >;
-
-   {
-      my $guard = guard(sub { print 'whatever' });
-   }
-   # 'whatever' is printed here
-   {
-      my $guard = guard(sub { print 'whatever' });
-      # ... do stuff...
-      $guard->release; # 'whatever' is printed here
-   }
-   # nothing is printed here
+   use Bot::ChatBots qw< load_module resolve_module >;
 
    resolve_module('Duh');        # returns 'Bot::ChatBots::Duh'
    resolve_module('^Duh');       # returns 'Duh'
@@ -40,12 +29,6 @@ stuff with Bot::ChatBots.
 Nothing is exported by default.
 
 =head1 FUNCTIONS
-
-=head2 B<< guard >>
-
-   my $guard = guard(sub{ ... });
-
-Returns a guard object by calling L<Bot::ChatBots::Guard/new>.
 
 =head2 B<< load_module >>
 
@@ -122,7 +105,7 @@ prefixing. See L</SYNOPSIS> for some examples.
 
 =head1 SEE ALSO
 
-L<Bot::ChatBots>, L<Bot::ChatBots::Guard>, L<Module::Runtime>.
+L<Bot::ChatBots>, L<Module::Runtime>.
 
 =head1 AUTHOR
 

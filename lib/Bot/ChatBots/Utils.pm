@@ -5,12 +5,7 @@ use strict;
 use Exporter 'import';
 use Module::Runtime qw< use_module >;
 
-our @EXPORT_OK = qw< guard load_module pipeline resolve_module >;
-
-sub guard {
-   require Bot::ChatBots::Guard;
-   return Bot::ChatBots::Guard->new(@_);
-}
+our @EXPORT_OK = qw< load_module pipeline resolve_module >;
 
 sub load_module { return use_module(resolve_module(@_)) }
 
