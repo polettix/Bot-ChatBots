@@ -1,6 +1,6 @@
 package Bot::ChatBots::Role::Source;
 use strict;
-{ our $VERSION = '0.001017'; }
+{ our $VERSION = '0.001018'; }
 
 use Ouch;
 use Log::Any qw< $log >;
