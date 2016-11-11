@@ -73,6 +73,10 @@ L<Log::Any>) at the INFO level.
 
 =head1 METHODS
 
+This class composes role L<Bot::ChatBots::Role::Processor> to expose its
+L<Bot::ChatBots::Role::Processor/processor>. In addition, it also has the
+methods described in the following subsections.
+
 =head2 B<< channels >>
 
    my $channels_hashref = $obj->channels;

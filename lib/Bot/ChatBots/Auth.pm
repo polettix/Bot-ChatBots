@@ -5,6 +5,7 @@ use strict;
 use Log::Any qw< $log >;
 
 use Moo;
+with 'Bot::ChatBots::Role::Processor';
 
 has channels => (is => 'rw', default => sub { return {} });
 has name => (is => 'ro', default => sub { return ref($_[0]) || $_[0] });
@@ -16,7 +17,10 @@ sub process {
 
    my $users = $self->users;
    if (keys %$users) {
-      my $id = $record->{sender}{id} // return;
+      my $id = $record->{sender}{id} // do {
+         $log->info("$name: sender id is not present");
+         return;
+      };
       if (exists $users->{blacklist}{$id}) {
          $log->info("$name: sender '$id' is blacklisted, blocking");
          return;
@@ -32,7 +36,10 @@ sub process {
    my $channels = $self->channels;
    if (keys %$channels) {
       my $id = $record->{channel}{fqid} // $record->{channel}{id}
-        // return;
+        // do {
+         $log->info("$name: chat id is not present");
+         return;
+        };
       if (exists $channels->{blacklist}{$id}) {
          $log->info("$name: chat '$id' is blacklisted, blocking");
          return;
