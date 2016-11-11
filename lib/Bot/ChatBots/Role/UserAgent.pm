@@ -29,7 +29,8 @@ sub BUILD_ua {
 }
 
 sub may_start_loop {
-   my ($self, %args) = @_;
+   my $self = shift;
+   my %args = (@_ && ref($_[0])) ? %{$_[0]} : @_;
    my $start_loop =
      exists($args{start_loop})
      ? $args{start_loop}
@@ -39,13 +40,14 @@ sub may_start_loop {
 } ## end sub may_start_loop
 
 sub ua_request {
-   my ($self, $method, %args) = @_;
+   my ($self, $method) = splice @_, 0, 2;
+   my %args = (@_ && ref($_[0])) ? %{$_[0]} : @_;
    $method = lc $method;
 
    my @ua_args = @{$args{ua_args}};
 
    my @callback =
-       (scalar(@ua_args) && (ref($ua_args[-1] eq 'CODE'))) ? (pop @ua_args)
+       (scalar(@ua_args) && (ref($ua_args[-1]) eq 'CODE')) ? (pop @ua_args)
      : $self->has_callback ? ($self->callback)
      :                       ();
 
