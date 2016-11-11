@@ -1,6 +1,6 @@
 package Bot::ChatBots::Role::Sender;
 use strict;
-{ our $VERSION = '0.001014'; }
+{ our $VERSION = '0.001015'; }
 
 use Moo::Role;
 requires 'send_message';
