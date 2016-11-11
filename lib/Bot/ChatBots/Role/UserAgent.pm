@@ -1,6 +1,6 @@
 package Bot::ChatBots::Role::UserAgent;
 use strict;
-{ our $VERSION = '0.001015'; }
+{ our $VERSION = '0.001016'; }
 
 use Moo::Role;
 
