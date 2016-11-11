@@ -1,6 +1,6 @@
 package Bot::ChatBots::Role::Sender;
 use strict;
-{ our $VERSION = '0.001018'; }
+{ our $VERSION = '0.001019'; }
 
 use Moo::Role;
 with 'Bot::ChatBots::Role::Processor';

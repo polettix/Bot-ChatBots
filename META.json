@@ -58,8 +58,19 @@
          }
       }
    },
-   "release_status" : "stable",
-   "version" : "0.001018",
+   "release_status" : "testing",
+   "resources" : {
+      "bugtracker" : {
+         "web" : "https://github.com/polettix/Bot-ChatBots/issues"
+      },
+      "homepage" : "https://github.com/polettix/Bot-ChatBots",
+      "repository" : {
+         "type" : "git",
+         "url" : "https://github.com/polettix/Bot-ChatBots.git",
+         "web" : "https://github.com/polettix/Bot-ChatBots"
+      }
+   },
+   "version" : "0.001019",
    "x_contributors" : [
       "Flavio Poletti <flavio@polettix.it>"
    ]
