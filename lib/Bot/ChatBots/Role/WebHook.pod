@@ -136,6 +136,11 @@ C<BUILD> to make sure the route is installed, like this:
 
 =item *
 
+L</BUILD_code> if you want to set a default code different from the
+default different from the default;
+
+=item *
+
 L</normalize_record> is mandatory and it allows you to provide a "default"
 shape to the records, in order to make life easier to the tube down along
 the road;
@@ -170,6 +175,16 @@ Read-only accessor for the app object, which CAN be set in the
 construction. Optionally used by L</install_route>, unless it has
 parameter C<routes> in its arguments list. It should comply to the
 L<Mojolicious> object interface.
+
+=head2 B<< code >>
+
+   my $code = $obj->code;
+
+The code that is used in the rendering, by default. This is ignored in
+case you do the rendering yourself, of course. See also L</BUILD_code> for
+the default value.
+
+Available as of (non-developer) release 0.004.
 
 =head2 B<< custom_pairs >>
 
@@ -225,6 +240,17 @@ Possibly used by L</BUILD_processor>.
 
 It should be safe to override the following methods in your classes
 composing this role.
+
+=head2 B<< BUILD_code >>
+
+Builder for L</code>. Defaults to C<204>, which is the HTTP code for C<No
+Response>. You might want to change it depending on how your webhook
+behaves, e.g. to C<200> (C<OK>) if it actually provides a response back or
+to C<202> (C<Accepted>) if the request is fine but you still cannot
+guarantee on the outcomes.
+
+Available as of (non-developer) release 0.004.
+
 
 =head2 B<< BUILD_method >>
 

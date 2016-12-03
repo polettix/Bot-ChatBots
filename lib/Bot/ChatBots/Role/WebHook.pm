@@ -21,9 +21,16 @@ has app => (
    weak_ref => 1,
 );
 
+has code => (
+   is => 'ro',
+   lazy => 1,
+   builder => 'BUILD_code',
+);
+
 has method => (
    is   => 'ro',
    lazy => 1,
+   builder => 'BUILD_method',
 );
 
 has path => (
@@ -33,6 +40,8 @@ has path => (
 );
 
 has url => (is => 'ro');
+
+sub BUILD_code { return 204 }
 
 sub BUILD_method { return 'post' }
 
@@ -76,7 +85,7 @@ sub handler {
       );
 
       # did anyone set the flag? Otherwise stick to the safe side
-      return $flags{rendered} || $c->rendered(204);
+      return $flags{rendered} || $c->rendered($self->code);
    };
 } ## end sub handler
 
