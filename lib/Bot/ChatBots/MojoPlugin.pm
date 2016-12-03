@@ -1,6 +1,6 @@
 package Bot::ChatBots::MojoPlugin;
 use strict;
-{ our $VERSION = '0.002'; }
+{ our $VERSION = '0.003'; }
 
 use Bot::ChatBots::Utils qw< load_module >;
 
