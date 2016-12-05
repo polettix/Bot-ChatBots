@@ -1,6 +1,7 @@
 {{$NEXT}}
    - "use warnings" everywhere, thanks to Mohammad S Anwar (@manwar
      on GitHub) for the heads-up
+   - use correct links for badges
 
 0.004  2016-12-05 07:54:50 CET
    - release after 82 PASSes in CPAN Testers (Thanks!)
