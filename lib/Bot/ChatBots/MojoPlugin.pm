@@ -1,5 +1,6 @@
 package Bot::ChatBots::MojoPlugin;
 use strict;
+use warnings;
 { our $VERSION = '0.004'; }
 
 use Bot::ChatBots::Utils qw< load_module >;

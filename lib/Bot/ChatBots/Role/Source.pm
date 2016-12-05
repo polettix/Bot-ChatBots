@@ -1,5 +1,6 @@
 package Bot::ChatBots::Role::Source;
 use strict;
+use warnings;
 { our $VERSION = '0.004'; }
 
 use Ouch;
@@ -89,7 +90,7 @@ sub process_updates {
    my @retval;
    for my $i (0 .. ($n_updates - 1)) {
       my %call;
-      push @retval, \%call if defined wantarray; # no void context
+      push @retval, \%call if defined wantarray;    # no void context
       try {
          $call{update} = $updates->[$i];
          $call{record} = $self->normalize_record(
@@ -113,7 +114,7 @@ sub process_updates {
 
    $self->review_outcomes(@retval) if $self->can('review_outcomes');
 
-   return unless defined wantarray; # void is void!
+   return unless defined wantarray;    # void is void!
    return @retval if wantarray;
    return \@retval;
 } ## end sub process_updates
@@ -121,9 +122,10 @@ sub process_updates {
 sub should_rethrow {
    my $self = shift;
    my $args = (@_ && ref($_[0])) ? $_[0] : {@_};
-   return exists($args->{rethrow}) ? $args->{rethrow}
-      : $self->can('rethrow')      ? $self->rethrow
-      : 0
-}
+   return
+       exists($args->{rethrow}) ? $args->{rethrow}
+     : $self->can('rethrow')    ? $self->rethrow
+     :                            0;
+} ## end sub should_rethrow
 
 1;

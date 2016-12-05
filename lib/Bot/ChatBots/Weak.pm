@@ -1,5 +1,6 @@
 package Bot::ChatBots::Weak;
 use strict;
+use warnings;
 { our $VERSION = '0.004'; }
 
 use Scalar::Util qw< weaken >;
@@ -34,7 +35,7 @@ sub set {
       weaken($self->{$key}) if ref $value;
    }
    return $self;
-}
+} ## end sub set
 
 sub TO_JSON { return undef }
 

@@ -1,5 +1,6 @@
 package Bot::ChatBots::Auth;
 use strict;
+use warnings;
 { our $VERSION = '0.004'; }
 
 use Log::Any qw< $log >;
@@ -35,11 +36,10 @@ sub process {
 
    my $channels = $self->channels;
    if (keys %$channels) {
-      my $id = $record->{channel}{fqid} // $record->{channel}{id}
-        // do {
+      my $id = $record->{channel}{fqid} // $record->{channel}{id} // do {
          $log->info("$name: chat id is not present");
          return;
-        };
+      };
       if (exists $channels->{blacklist}{$id}) {
          $log->info("$name: chat '$id' is blacklisted, blocking");
          return;

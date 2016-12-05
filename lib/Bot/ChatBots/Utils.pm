@@ -1,5 +1,6 @@
 package Bot::ChatBots::Utils;
 use strict;
+use warnings;
 { our $VERSION = '0.004'; }
 
 use 5.010;

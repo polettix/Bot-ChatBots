@@ -1,5 +1,6 @@
 package Bot::ChatBots::Role::WebHook;
 use strict;
+use warnings;
 { our $VERSION = '0.004'; }
 
 use Ouch;
@@ -22,14 +23,14 @@ has app => (
 );
 
 has code => (
-   is => 'ro',
-   lazy => 1,
+   is      => 'ro',
+   lazy    => 1,
    builder => 'BUILD_code',
 );
 
 has method => (
-   is   => 'ro',
-   lazy => 1,
+   is      => 'ro',
+   lazy    => 1,
    builder => 'BUILD_method',
 );
 
@@ -81,7 +82,7 @@ sub handler {
             flags => \%flags,
          },
          updates => \@updates,
-         %$args, # may override it all!
+         %$args,    # may override it all!
       );
 
       # did anyone set the flag? Otherwise stick to the safe side
