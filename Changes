@@ -1,5 +1,8 @@
 {{$NEXT}}
 
+0.004  2016-12-05 07:54:50 CET
+   - release after 82 PASSes in CPAN Testers (Thanks!)
+
 0.003  2016-12-03 18:34:38 CET
    - add default code overriding in WebHooks (default is 204)
    - tracking project via Travis-CI (.travis.yml)
