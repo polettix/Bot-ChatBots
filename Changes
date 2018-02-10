@@ -1,4 +1,5 @@
 {{$NEXT}}
+   - use "after_render" for automatically tracking rendered stuff
 
 0.006  2016-12-05 16:07:36 CET
    - "use warnings" everywhere, thanks to Mohammad S Anwar (@manwar
