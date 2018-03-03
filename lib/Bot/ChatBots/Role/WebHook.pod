@@ -326,6 +326,13 @@ input arguments in C<%arg> are:
 
 =over
 
+=item C<handler>
+
+the handler to be installed, as a sub reference. Defaults to L</handler>,
+which is passed C<\%args>. You will generally not need to pass this, but
+sometimes (e.g. the Trello API) you have to install more than one route and
+specify some specific (although simple) action for them.
+
 =item C<method> 
 
 the method of the registered route. Defaults to L</method>. Note that it

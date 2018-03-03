@@ -132,7 +132,8 @@ sub install_route {
    my $method = lc($args->{method} // $self->method // 'post');
    my $r      = $args->{routes} // $self->app->routes;
    my $p      = $args->{path} // $self->path;
-   return $r->$method($p => $self->handler($args));
+   my $h      = $args->{handler} // $self->handler($args);
+   return $r->$method($p => $h);
 } ## end sub install_route
 
 1;
