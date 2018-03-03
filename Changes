@@ -1,6 +1,8 @@
 {{$NEXT}}
    - remove VERSION section from MojoPlugin.pm
-   - add parameter handler to install_route (WebHook.pm)
+   - add parameter handler to install_route in WebHook
+   - set default parse_request in WebHook
+   - cleanup in documentation for WebHook
 
 0.008  2018-02-11 15:29:50 CET
    - release after 67 PASSes on CPAN Testers

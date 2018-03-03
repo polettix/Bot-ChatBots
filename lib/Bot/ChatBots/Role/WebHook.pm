@@ -13,7 +13,6 @@ use Try::Tiny;
 use Moo::Role;
 
 with 'Bot::ChatBots::Role::Source';
-requires 'parse_request';
 requires 'process_updates';
 
 has app => (
@@ -135,5 +134,10 @@ sub install_route {
    my $h      = $args->{handler} // $self->handler($args);
    return $r->$method($p => $h);
 } ## end sub install_route
+
+sub parse_request { # most APIs rely on JSON... let's leverage this
+   my ($self, $req) = @_;
+   return $req->json;
+}
 
 1;
