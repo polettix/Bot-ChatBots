@@ -95,6 +95,21 @@ L</poll> is called regularly to fetch some updates.
 It should be safe to override the following methods in your classes
 composing this role.
 
+=begin COMMENT
+
+=head2 B<< BUILD >>
+
+calls L</schedule> upon construction.
+
+=end COMMENT
+
+=head2 B<< args >>
+
+   my $args_aref = $obj->args;
+
+Set a list of arguments eventually consumed by L</poll>, inside an array
+reference.
+
 =head2 B<< interval >>
 
    my $interval = $obj->interval;
