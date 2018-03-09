@@ -1,5 +1,10 @@
 {{$NEXT}}
 
+0.010  2018-03-09 06:54:54 CET
+   - fix Copyright year in new modules' docs
+   - fix some links in new modules' docs
+   - release after 66 PASSes on CPAN Testers (Thanks!)
+
 0.009  2018-03-08 23:03:32 CET
    - remove VERSION section from MojoPlugin.pm
    - add parameter handler to install_route in WebHook
