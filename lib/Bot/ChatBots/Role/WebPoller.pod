@@ -41,7 +41,7 @@ asynchronously.
 
 You MUST provide C<tx_args> upon construction, pointing to an array
 reference containing all parameters for fetching data. The contents of the
-array is a list compatible with L</Mojo::UserAgent::build_tx>.
+array is a list compatible with L<Mojo::UserAgent/build_tx>.
 
 You can optionally configure a specific L<Mojo::UserAgent> as the C<ua>
 parameter, e.g. if you want to set specific parameters like a timeout.
@@ -68,7 +68,7 @@ request contained in L</tx_args>.
    my $array_ref = $obj->tx_args;
 
 Get an array ref with the "instructions" for fetching new data. Refer to
-L</Mojo::UserAgent::build_tx>, because it is used like this:
+L<Mojo::UserAgent/build_tx>, because it is used like this:
 
    my $tx = $ua->build_tx(@$array_ref);
 
@@ -94,7 +94,7 @@ Flavio Poletti <polettix@cpan.org>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (C) 2016 by Flavio Poletti <polettix@cpan.org>
+Copyright (C) 2018 by Flavio Poletti <polettix@cpan.org>
 
 This module is free software. You can redistribute it and/or modify it
 under the terms of the Artistic License 2.0.
