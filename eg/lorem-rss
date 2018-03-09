@@ -3,14 +3,21 @@ use strict;
 use warnings;
 use 5.012;
 use open qw/:std :utf8/;
-
+use Getopt::Long;
 use Mojo::IOLoop ();
 
+my $interval = 5;
+my $method   = 'get';
+my $url = 'https://lorem-rss.herokuapp.com/feed?unit=second&interval=3';
+GetOptions(
+   'interval|i=i' => \$interval,
+   'method|m=s'   => \$method,
+   'url|u=s'      => \$url
+) or die "error in command line arguments\n";
+
 my $poller = RSSPoller->new(
-   tx_args => [
-      get => 'https://lorem-rss.herokuapp.com/feed?unit=second&interval=3'
-   ],
-   interval  => 5,
+   tx_args   => [$method => $url],
+   interval  => $interval,
    processor => \&processor,
 );
 Mojo::IOLoop->start;
@@ -21,7 +28,11 @@ sub processor {
    my $p = $record->{payload};
    $n++;
    say "$n. $p->{title}\n   $p->{link}\n   $p->{description}";
-   say '-' x 30 if $record->{batch}{count} == $record->{batch}{total};
+
+   # put a separator
+   my $batch = $record->{batch};
+   say(($batch->{count} == $batch->{total}) ? ('-' x 30) : '');
+
    return $record;
 } ## end sub processor
 
