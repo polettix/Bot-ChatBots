@@ -1,4 +1,6 @@
 {{$NEXT}}
+   - make example RSS reader more general
+   - add missing dependency for IO::Socket::SSL
 
 0.010  2018-03-09 06:54:54 CET
    - fix Copyright year in new modules' docs
