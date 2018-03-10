@@ -1,4 +1,6 @@
 {{$NEXT}}
+
+0.012  2018-03-10 07:15:40 CET
    - make example RSS reader more general
    - add missing dependency for IO::Socket::SSL
 
